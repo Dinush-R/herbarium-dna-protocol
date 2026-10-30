@@ -1,0 +1,86 @@
+---
+import type { Step } from "../data/protocol";
+
+interface Props {
+  step: Step;
+  stageId: string;
+}
+
+const { step, stageId } = Astro.props;
+const uid = `${stageId}-step-${step.id}`;
+const hasInfo = Boolean(step.info);
+const hasTip = Boolean(step.tip);
+const hasHerb = Boolean(step.herbariumNote);
+const isNoteOnly = !step.text && hasHerb;
+---
+
+<div class="step-card">
+  <div class="step-header">
+    <span class="step-number" aria-label={`Step ${step.id}`}>{step.id}</span>
+    <div class="step-text">
+      {isNoteOnly ? (
+        <div class="panel panel-herb">
+          <div class="panel-label">Herbarium Specimen Note</div>
+          <Fragment set:html={step.herbariumNote} />
+        </div>
+      ) : (
+        <p set:html={step.text} />
+      )}
+    </div>
+    {!isNoteOnly && (hasInfo || hasTip) && (
+      <div class="step-actions">
+        {hasInfo && (
+          <button
+            class="toggle-btn"
+            type="button"
+            aria-expanded="false"
+            aria-controls={`${uid}-info`}
+            title="Scientific rationale"
+          >i</button>
+        )}
+        {hasTip && (
+          <button
+            class="toggle-btn tip-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls={`${uid}-tip`}
+            title="Practical tip"
+            style="border-color:#b8860b;color:#b8860b;"
+          >!</button>
+        )}
+      </div>
+    )}
+  </div>
+
+  {!isNoteOnly && hasInfo && (
+    <div class="panel panel-info" id={`${uid}-info`} hidden>
+      <div class="panel-label">Scientific Rationale</div>
+      <p>{step.info}</p>
+    </div>
+  )}
+
+  {!isNoteOnly && hasTip && (
+    <div class="panel panel-tip" id={`${uid}-tip`} hidden>
+      <div class="panel-label">Practical Tip</div>
+      <p>{step.tip}</p>
+    </div>
+  )}
+
+  {!isNoteOnly && hasHerb && (
+    <div class="panel panel-herb" style="margin-top:0.5rem;">
+      <div class="panel-label">Herbarium Specimen Note</div>
+      <p set:html={step.herbariumNote} />
+    </div>
+  )}
+</div>
+
+<style>
+  .tip-toggle:hover {
+    background: #b8860b !important;
+    color: var(--bg) !important;
+  }
+  .tip-toggle[aria-expanded="true"] {
+    background: #b8860b !important;
+    color: var(--bg) !important;
+  }
+</style>

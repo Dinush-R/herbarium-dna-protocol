@@ -1,0 +1,45 @@
+---
+// Molarity calculator for sequencing prep
+---
+
+<div class="calc-card" id="molarity-calculator">
+  <h3>Molarity Calculator</h3>
+  <p style="font-size:0.85rem;color:var(--fg-muted);margin-bottom:1rem;">
+    Formula: Molarity (nM) = (Concentration ng/μL) ÷ (660 × Avg Fragment Size bp) × 1,000,000
+  </p>
+  <div class="calc-grid">
+    <div class="calc-field">
+      <label for="mol-conc">Concentration (ng/μL)</label>
+      <input type="number" id="mol-conc" min="0.01" step="0.01" value="5" />
+    </div>
+    <div class="calc-field">
+      <label for="mol-size">Avg Fragment Size (bp)</label>
+      <input type="number" id="mol-size" min="1" step="1" value="350" />
+    </div>
+  </div>
+  <dl class="calc-results">
+    <dt>Calculated Molarity</dt>
+    <dd id="mol-result">21.65 nM</dd>
+  </dl>
+</div>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const concEl = document.getElementById("mol-conc") as HTMLInputElement | null;
+    const sizeEl = document.getElementById("mol-size") as HTMLInputElement | null;
+    const resultEl = document.getElementById("mol-result");
+
+    function update(): void {
+      const conc = parseFloat(concEl?.value ?? "5") || 0;
+      const size = parseInt(sizeEl?.value ?? "350", 10) || 1;
+      const molarity = (conc / (660 * size)) * 1_000_000;
+      if (resultEl) {
+        resultEl.textContent = `${molarity.toFixed(2)} nM`;
+      }
+    }
+
+    concEl?.addEventListener("input", update);
+    sizeEl?.addEventListener("input", update);
+    update();
+  });
+</script>

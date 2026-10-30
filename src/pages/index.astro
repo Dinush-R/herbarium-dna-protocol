@@ -1,0 +1,77 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import StageNav from "../components/StageNav.astro";
+import StageSection from "../components/StageSection.astro";
+import ReagentCalculator from "../components/ReagentCalculator.astro";
+import DecisionsTable from "../components/DecisionsTable.astro";
+import MolarityCalculator from "../components/MolarityCalculator.astro";
+import { STAGES } from "../data/protocol";
+
+const extractionStage = STAGES[0]!;
+const libraryStage = STAGES[1]!;
+const hybStage = STAGES[2]!;
+const seqStage = STAGES[3]!;
+---
+
+<BaseLayout>
+  <div class="container">
+    <header class="site-header">
+      <h1>Herbarium Specimen DNA Extraction &amp; Sequencing</h1>
+      <p>Interactive step-by-step protocol guide for old herbarium leaf specimens</p>
+      <p class="kew-credit">
+        Based on the RBG Kew–IKEA of Sweden Rattan DNA Extraction Protocol v1.0
+        (30 April 2023) · Modified Doyle &amp; Doyle (1987) CTAB method
+      </p>
+    </header>
+
+    <StageNav />
+
+    <!-- Stage 1: Extraction -->
+    <StageSection stage={extractionStage} isFirst={true}>
+      <ReagentCalculator />
+    </StageSection>
+
+    <!-- Stage 2: Library Prep -->
+    <StageSection stage={libraryStage}>
+      <DecisionsTable />
+    </StageSection>
+
+    <!-- Stage 3: Hybridisation -->
+    <StageSection stage={hybStage} />
+
+    <!-- Stage 4: Sequencing Prep -->
+    <StageSection stage={seqStage}>
+      <MolarityCalculator />
+    </StageSection>
+
+    <footer class="site-footer">
+      <p>
+        Protocol reference: Royal Botanic Gardens, Kew · Laboratory Protocols for
+        DNA Extraction and Sequencing v1.0
+      </p>
+      <p style="margin-top:0.35rem;">
+        Built with Astro + TypeScript · Designed for Cloudflare Pages
+      </p>
+    </footer>
+  </div>
+</BaseLayout>
+
+<script>
+  // Toggle info/tip panels
+  document.addEventListener("astro:page-load", () => {
+    document.addEventListener("click", (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (!target.classList.contains("toggle-btn")) return;
+
+      const controlsId = target.getAttribute("aria-controls");
+      if (!controlsId) return;
+
+      const panel = document.getElementById(controlsId);
+      if (!panel) return;
+
+      const isExpanded = target.getAttribute("aria-expanded") === "true";
+      target.setAttribute("aria-expanded", String(!isExpanded));
+      panel.hidden = isExpanded;
+    });
+  });
+</script>

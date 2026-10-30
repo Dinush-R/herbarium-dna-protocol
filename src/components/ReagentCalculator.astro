@@ -1,0 +1,76 @@
+---
+// Server-rendered shell; interactivity via client-side script
+---
+
+<div class="calc-card" id="reagent-calculator">
+  <h3>Reagent Volume Calculator</h3>
+  <div class="calc-grid">
+    <div class="calc-field">
+      <label for="calc-species">Number of Species</label>
+      <input type="number" id="calc-species" min="1" max="200" value="1" />
+    </div>
+    <div class="calc-field">
+      <label for="calc-replicates">Replicates per Species</label>
+      <input type="number" id="calc-replicates" min="1" max="10" value="2" />
+    </div>
+  </div>
+  <dl class="calc-results" id="calc-output">
+    <dt>Total Samples (tubes)</dt>
+    <dd id="out-samples">4 (2 species × 2 replicates, +2 excess)</dd>
+    <dt>CTAB Buffer Volume</dt>
+    <dd id="out-ctab">2,988 μL (4 × 747 μL)</dd>
+    <dt>2-Mercaptoethanol Volume</dt>
+    <dd id="out-mercap">12 μL (4 × 3 μL)</dd>
+    <dt>RNase A Volume</dt>
+    <dd id="out-rnase">8 μL (2 tubes × 4 μL each)</dd>
+    <dt>SEVAG (24:1) Volume</dt>
+    <dd id="out-sevag">1,500 μL (2 tubes × 750 μL)</dd>
+  </dl>
+</div>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const speciesEl = document.getElementById("calc-species") as HTMLInputElement | null;
+    const repEl = document.getElementById("calc-replicates") as HTMLInputElement | null;
+
+    function fmt(n: number): string {
+      return n.toLocaleString("en-US");
+    }
+
+    function update(): void {
+      const species = Math.max(1, parseInt(speciesEl?.value ?? "1", 10) || 1);
+      const reps = Math.max(1, parseInt(repEl?.value ?? "2", 10) || 2);
+      const tubes = species * reps;
+      const excess = tubes + 2;
+
+      const el = (id: string) => document.getElementById(id);
+      const samplesOut = el("out-samples");
+      const ctabOut = el("out-ctab");
+      const mercapOut = el("out-mercap");
+      const rnaseOut = el("out-rnase");
+      const sevagOut = el("out-sevag");
+
+      if (samplesOut) samplesOut.textContent = `${excess} (${species} species × ${reps} replicates, +2 excess)`;
+      if (ctabOut) {
+        const ctab = excess * 747;
+        ctabOut.textContent = `${fmt(ctab)} μL (${excess} × 747 μL)`;
+      }
+      if (mercapOut) {
+        const mercap = excess * 3;
+        mercapOut.textContent = `${fmt(mercap)} μL (${excess} × 3 μL)`;
+      }
+      if (rnaseOut) {
+        const rnase = tubes * 4;
+        rnaseOut.textContent = `${fmt(rnase)} μL (${tubes} tubes × 4 μL each)`;
+      }
+      if (sevagOut) {
+        const sevag = tubes * 750;
+        sevagOut.textContent = `${fmt(sevag)} μL (${tubes} tubes × 750 μL)`;
+      }
+    }
+
+    speciesEl?.addEventListener("input", update);
+    repEl?.addEventListener("input", update);
+    update();
+  });
+</script>

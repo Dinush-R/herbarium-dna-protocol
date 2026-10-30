@@ -1,0 +1,38 @@
+---
+import type { Stage } from "../data/protocol";
+import StepCard from "./StepCard.astro";
+
+interface Props {
+  stage: Stage;
+  isFirst?: boolean;
+}
+
+const { stage, isFirst = false } = Astro.props;
+---
+
+<section
+  class:list={["stage-section", { active: isFirst }]}
+  data-stage={stage.id}
+  aria-label={stage.title}
+>
+  <h2>{stage.title}</h2>
+
+  <div class="stage-intro">
+    <div class="stage-time">{stage.timeEstimate}</div>
+    <p>{stage.introNote}</p>
+  </div>
+
+  <slot />
+
+  {stage.substages.map((sub) => (
+    <div class="substage">
+      <div class="substage-header">
+        <h3>{sub.title}</h3>
+        {sub.ref && <span class="substage-ref">{sub.ref}</span>}
+      </div>
+      {sub.steps.map((step) => (
+        <StepCard step={step} stageId={stage.id} />
+      ))}
+    </div>
+  ))}
+</section>

@@ -1,0 +1,38 @@
+---
+import { DECISIONS_TABLE } from "../data/protocol";
+---
+
+<div class="calc-card">
+  <h3>Decisions Table — Library Prep Parameters (Appendix A)</h3>
+  <p style="font-size:0.85rem;color:var(--fg-muted);margin-bottom:1rem;">
+    Use your gel / TapeStation results to find the matching row. This determines shearing, size selection, adaptor dilution, and PCR cycles.
+  </p>
+  <div class="table-wrap">
+    <table class="decisions-table">
+      <thead>
+        <tr>
+          <th>DNA Size</th>
+          <th>DNA Amount</th>
+          <th>Starting DNA (ng)</th>
+          <th>Shearing</th>
+          <th>Size Selection</th>
+          <th>Adaptor Dilute</th>
+          <th>PCR Cycles</th>
+        </tr>
+      </thead>
+      <tbody>
+        {DECISIONS_TABLE.map((row) => (
+          <tr>
+            <td>{row.sizeRange}</td>
+            <td>{row.amountRange}</td>
+            <td>{row.startingDna}</td>
+            <td>{row.shearing}</td>
+            <td>{row.sizeSelection}</td>
+            <td>{row.adaptorDilute}</td>
+            <td>{row.pcrCycles}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>

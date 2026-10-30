@@ -1,0 +1,41 @@
+---
+import { STAGES } from "../data/protocol";
+---
+
+<nav class="stage-nav" aria-label="Pipeline stages">
+  {STAGES.map((stage, i) => (
+    <button
+      class:list={["stage-btn", { active: i === 0 }]}
+      data-stage={stage.id}
+      type="button"
+      aria-pressed={i === 0 ? "true" : "false"}
+    >
+      {stage.label}
+    </button>
+  ))}
+</nav>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const buttons = document.querySelectorAll<HTMLButtonElement>(".stage-btn");
+    const sections = document.querySelectorAll<HTMLElement>(".stage-section");
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const stageId = btn.dataset.stage;
+        if (!stageId) return;
+
+        buttons.forEach((b) => {
+          b.classList.remove("active");
+          b.setAttribute("aria-pressed", "false");
+        });
+        btn.classList.add("active");
+        btn.setAttribute("aria-pressed", "true");
+
+        sections.forEach((s) => {
+          s.classList.toggle("active", s.dataset.stage === stageId);
+        });
+      });
+    });
+  });
+</script>
